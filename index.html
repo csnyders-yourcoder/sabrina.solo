@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You 🎁</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    background:
+        linear-gradient(rgba(10,30,50,0.75), rgba(10,30,50,0.9)),
+        url("https://images.unsplash.com/photo-1544829099-b9a0c07fad1a");
+    background-size: cover;
+    background-attachment: fixed;
+    color: white;
+    text-align: center;
+    overflow-x: hidden;
+}
+
+/* Snow container */
+#snow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Snowflakes */
+.snowflake {
+    position: absolute;
+    top: -10px;
+    color: white;
+    font-size: 1rem;
+    opacity: 0.8;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(110vh);
+        opacity: 0.2;
+    }
+}
+
+.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.show {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 1.2s ease;
+}
+
+.section {
+    max-width: 760px;
+    margin: 40px auto;
+    padding: 28px;
+    background: rgba(255,255,255,0.14);
+    backdrop-filter: blur(6px);
+    border-radius: 22px;
+    line-height: 1.8;
+    position: relative;
+    z-index: 1;
+}
+
+#countdown {
+    font-size: 2.2rem;
+    margin-top: 40vh;
+    position: relative;
+    z-index: 1;
+}
+
+h1 {
+    font-size: clamp(2.1rem, 6vw, 2.6rem);
+    margin: 30px 10px 10px;
+}
+
+.subtitle {
+    color: #dbeeff;
+    font-size: 1rem;
+}
+
+.images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 26px;
+    margin: 60px 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.image-card {
+    height: 200px;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Music button */
+.music-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.18);
+    border: none;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    z-index: 2;
+}
+
+.music-btn:hover {
+    background: rgba(255,255,255,0.28);
+}
+
+/* Corner accent */
+.corner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 1.4rem;
+    opacity: 0.6;
+    z-index: 2;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SNOW -->
+<div id="snow"></div>
+
+<!-- MUSIC -->
+<button class="music-btn" id="musicBtn">▶ Listen to a song</button>
+<audio id="bgMusic" loop>
+    <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<!-- COUNTDOWN -->
+<div id="countdown"></div>
+
+<!-- HEADER -->
+<div id="header" class="hidden">
+    <h1>Hey [[Friend Name]] 👋</h1>
+    <div class="subtitle">
+        A small digital surprise from across the world 🌍
+    </div>
+</div>
+
+<!-- IMAGES -->
+<div class="images hidden" id="images">
+    <div class="image-card">
+        <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba">
+    </div>
+    <div class="image-card">
+        <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
+    </div>
+</div>
+
+<!-- MESSAGES -->
+<div class="section hidden" id="m1">
+Distance makes it harder to show appreciation properly,
+so I figured I’d send something a little different.
+</div>
+
+<div class="section hidden" id="m2">
+One thing I’ll always appreciate about you:<br><br>
+<b>[[Inside joke / memory / trait]]</b>
+</div>
+
+<div class="section hidden" id="highlight">
+<b>Your highlight of the year:</b><br><br>
+[[Highlight of the year]]
+</div>
+
+<div class="section hidden" id="oneword">
+<b>One word that describes you:</b><br><br>
+<span style="font-size:1.8rem;">[[One word]]</span>
+</div>
+
+<div class="section hidden" id="m3">
+Looking ahead,<br>
+[[Looking forward message]]
+</div>
+
+<div class="section hidden" id="signoff">
+Stay warm over there 🇨🇦❄️<br><br>
+— <b>[[Your Name]]</b>
+</div>
+
+<div class="corner">❄️✨</div>
+
+<script>
+/* Music toggle */
+const music = document.getElementById("bgMusic");
+const musicBtn = document.getElementById("musicBtn");
+let isPlaying = false;
+
+musicBtn.addEventListener("click", () => {
+    if (!isPlaying) {
+        music.play();
+        musicBtn.textContent = "⏸ Pause";
+    } else {
+        music.pause();
+        musicBtn.textContent = "▶ Listen to a song";
+    }
+    isPlaying = !isPlaying;
+});
+
+/* Countdown */
+let count = 5;
+const countdownEl = document.getElementById("countdown");
+
+const timer = setInterval(() => {
+    countdownEl.textContent = `Opening in ${count}…`;
+    count--;
+    if (count < 0) {
+        clearInterval(timer);
+        countdownEl.style.display = "none";
+        startReveal();
+    }
+}, 1000);
+
+/* Reveal sequence */
+function reveal(id, delay) {
+    setTimeout(() => {
+        document.getElementById(id).classList.add("show");
+    }, delay);
+}
+
+function startReveal() {
+    reveal("header", 1200);
+    reveal("images", 2600);
+    reveal("m1", 4200);
+    reveal("m2", 6000);
+    reveal("highlight", 7800);
+    reveal("oneword", 9600);
+    reveal("m3", 11400);
+    reveal("signoff", 13200);
+}
+
+/* Snow generator */
+const snowContainer = document.getElementById("snow");
+
+function createSnowflake() {
+    const snowflake = document.createElement("div");
+    snowflake.className = "snowflake";
+    snowflake.textContent = "❄";
+    snowflake.style.left = Math.random() * 100 + "vw";
+    snowflake.style.fontSize = Math.random() * 10 + 10 + "px";
+    snowflake.style.animationDuration = Math.random() * 5 + 5 + "s";
+    snowflake.style.opacity = Math.random();
+
+    snowContainer.appendChild(snowflake);
+
+    setTimeout(() => {
+        snowflake.remove();
+    }, 10000);
+}
+
+setInterval(createSnowflake, 300);
+</script>
+
+</body>
+</html>
